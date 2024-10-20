@@ -1,6 +1,7 @@
 package service
 
 import (
+	"agent/internal/config"
 	"agent/internal/dto"
 	"agent/internal/utils"
 	"sync"
@@ -11,11 +12,13 @@ import (
 
 type Service struct {
 	logger *zap.Logger
+	config *config.Config
 }
 
-func New(l *zap.Logger) *Service {
+func New(l *zap.Logger, c *config.Config) *Service {
 	return &Service{
 		logger: l,
+		config: c,
 	}
 }
 
@@ -48,9 +51,13 @@ func (s *Service) CollectMetrics() {
 
 			utils.PrintMetrics(metrics)
 
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Second * time.Duration(s.config.PollInterval))
 		}
 	}()
 
 	wg.Wait()
+}
+
+func (s *Service) SendMetrics(metrics []dto.Metric) {
+
 }

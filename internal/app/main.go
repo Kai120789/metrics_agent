@@ -25,8 +25,9 @@ func StartApp() {
 	log := zapLog.ZapLogger
 
 	// init service
-	serv := service.New(log)
+	serv := service.New(log, cfg)
 
+	// collect metrics every n seconds
 	serv.CollectMetrics()
 
 	//start server

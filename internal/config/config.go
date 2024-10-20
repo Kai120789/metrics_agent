@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/zap/zapcore"
@@ -11,8 +12,8 @@ import (
 type Config struct {
 	ServerAddress  string
 	LogLevel       string
-	PollInterval   string
-	ReportInterval string
+	PollInterval   int64
+	ReportInterval int64
 }
 
 func GetConfig() (*Config, error) {
@@ -32,16 +33,24 @@ func GetConfig() (*Config, error) {
 		cfg.LogLevel = zapcore.ErrorLevel.String()
 	}
 
-	flag.StringVar(&cfg.PollInterval, "p", "5", "poll interval (sec)")
+	flag.Int64Var(&cfg.PollInterval, "p", 5, "poll interval (sec)")
 
 	if envPollInt := os.Getenv("POLL_INTERVAL"); envPollInt != "" {
-		cfg.PollInterval = envPollInt
+		intEnvPollInt, err := strconv.Atoi(envPollInt)
+		if err != nil {
+			return nil, err
+		}
+		cfg.PollInterval = int64(intEnvPollInt)
 	}
 
-	flag.StringVar(&cfg.ReportInterval, "r", "20", "report interval (sec)")
+	flag.Int64Var(&cfg.ReportInterval, "r", 20, "report interval (sec)")
 
 	if envRepInt := os.Getenv("REPORT_INTERVAL"); envRepInt != "" {
-		cfg.ReportInterval = envRepInt
+		intEnvRepInt, err := strconv.Atoi(envRepInt)
+		if err != nil {
+			return nil, err
+		}
+		cfg.ReportInterval = int64(intEnvRepInt)
 	}
 
 	flag.Parse()
