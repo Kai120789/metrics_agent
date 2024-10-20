@@ -2,6 +2,7 @@ package app
 
 import (
 	"agent/internal/config"
+	"agent/pkg/logger"
 	"fmt"
 )
 
@@ -13,10 +14,14 @@ func StartApp() {
 		return
 	}
 
-	fmt.Println(cfg)
-
 	// init logger
+	log, err := logger.New(cfg.LogLevel)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
+	_ = log
 	// init service
 
 	// init handler
