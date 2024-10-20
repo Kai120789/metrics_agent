@@ -13,14 +13,13 @@ func GetMetrics() []dto.Metric {
 
 	var metrics []dto.Metric
 
-	// Helper function to add a metric
 	addMetric := func(id uint, name string, value float64) {
 		metric := dto.Metric{
 			ID:        id,
 			Name:      name,
 			Type:      "gauge",
 			Value:     &value,
-			Delta:     nil, // No delta for gauge
+			Delta:     nil,
 			CreatedAt: time.Now(),
 		}
 		metrics = append(metrics, metric)
