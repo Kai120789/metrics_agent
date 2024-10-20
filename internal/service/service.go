@@ -1,10 +1,10 @@
 package service
 
 import (
+	"agent/internal/api"
 	"agent/internal/config"
 	"agent/internal/dto"
 	"agent/internal/utils"
-	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -22,9 +22,7 @@ func New(l *zap.Logger, c *config.Config) *Service {
 	}
 }
 
-func (s *Service) CollectMetrics() {
-	var metrics []dto.Metric
-
+func (s *Service) AddPollCount(metrics []dto.Metric) []dto.Metric {
 	pollCountStartValue := int64(0)
 
 	pollCount := dto.Metric{
@@ -38,26 +36,24 @@ func (s *Service) CollectMetrics() {
 
 	metrics = append(metrics, pollCount)
 
-	var wg sync.WaitGroup
-	wg.Add(1)
+	return metrics
+}
 
-	go func() {
-		for {
-			metrics = metrics[:1]
+func (s *Service) CollectMetrics(metrics []dto.Metric) {
+	metrics = metrics[:1]
 
-			metrics = append(metrics, utils.GetMetrics()...)
+	metrics = append(metrics, utils.GetMetrics()...)
 
-			*metrics[0].Delta += 1
+	*metrics[0].Delta += 1
 
-			utils.PrintMetrics(metrics)
+	utils.PrintMetrics(metrics)
 
-			time.Sleep(time.Second * time.Duration(s.config.PollInterval))
-		}
-	}()
-
-	wg.Wait()
+	time.Sleep(time.Second * time.Duration(s.config.PollInterval))
 }
 
 func (s *Service) SendMetrics(metrics []dto.Metric) {
-
+	err := api.SendMetrics(metrics, s.config.ServerAddress)
+	if err != nil {
+		return
+	}
 }
