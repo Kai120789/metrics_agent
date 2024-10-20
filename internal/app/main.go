@@ -6,6 +6,7 @@ import (
 	"agent/internal/utils"
 	"agent/pkg/logger"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -24,12 +25,12 @@ func StartApp() {
 		return
 	}
 
-	metrics := utils.GetMetrics()
+	var metrics []dto.Metric
 
 	pollCountStartValue := int64(0)
 
 	pollCount := dto.Metric{
-		ID:        31,
+		ID:        1,
 		Name:      "PollCount",
 		Type:      "counter",
 		Value:     nil,
@@ -39,27 +40,26 @@ func StartApp() {
 
 	metrics = append(metrics, pollCount)
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go func() {
+		for {
+			metrics = metrics[:1]
+
+			metrics = append(metrics, utils.GetMetrics()...)
+
+			*metrics[0].Delta += 1
+
+			utils.PrintMetrics(metrics)
+
+			time.Sleep(time.Second * 2)
+		}
+	}()
+
 	_ = log
 
-	for _, metric := range metrics {
-		if metric.Value != nil {
-			fmt.Println(
-				"ID:", metric.ID,
-				"Name:", metric.Name,
-				"Type:", metric.Type,
-				"Value:", *metric.Value,
-				"CreatedAt:", metric.CreatedAt.String(),
-			)
-		} else {
-			fmt.Println(
-				"ID:", metric.ID,
-				"Name:", metric.Name,
-				"Type:", metric.Type,
-				"Delta:", *metric.Delta,
-				"CreatedAt:", metric.CreatedAt.String(),
-			)
-		}
-	}
+	wg.Wait()
 
 	// init service
 
