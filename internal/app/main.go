@@ -2,6 +2,7 @@ package app
 
 import (
 	"agent/internal/config"
+	"agent/internal/utils"
 	"agent/pkg/logger"
 	"fmt"
 )
@@ -21,7 +22,20 @@ func StartApp() {
 		return
 	}
 
+	metrics := utils.GetMetrics()
+
 	_ = log
+
+	for _, metric := range *metrics {
+		fmt.Println(
+			"ID:", metric.ID,
+			"Name:", metric.Name,
+			"Type:", metric.Type,
+			"Value:", *metric.Value,
+			"CreatedAt:", metric.CreatedAt.String(),
+		)
+	}
+
 	// init service
 
 	// init handler
