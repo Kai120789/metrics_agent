@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func GetMetrics() *[]dto.Metric {
+func GetMetrics() []dto.Metric {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
@@ -57,5 +57,5 @@ func GetMetrics() *[]dto.Metric {
 	addMetric(29, "TotalMemory", float64(memStats.Sys))
 	addMetric(30, "FreeMemory", float64(memStats.Frees))
 
-	return &metrics
+	return metrics
 }

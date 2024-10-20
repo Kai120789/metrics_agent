@@ -2,9 +2,11 @@ package app
 
 import (
 	"agent/internal/config"
+	"agent/internal/dto"
 	"agent/internal/utils"
 	"agent/pkg/logger"
 	"fmt"
+	"time"
 )
 
 func StartApp() {
@@ -24,16 +26,39 @@ func StartApp() {
 
 	metrics := utils.GetMetrics()
 
+	pollCountStartValue := int64(0)
+
+	pollCount := dto.Metric{
+		ID:        31,
+		Name:      "PollCount",
+		Type:      "counter",
+		Value:     nil,
+		Delta:     &pollCountStartValue,
+		CreatedAt: time.Now(),
+	}
+
+	metrics = append(metrics, pollCount)
+
 	_ = log
 
-	for _, metric := range *metrics {
-		fmt.Println(
-			"ID:", metric.ID,
-			"Name:", metric.Name,
-			"Type:", metric.Type,
-			"Value:", *metric.Value,
-			"CreatedAt:", metric.CreatedAt.String(),
-		)
+	for _, metric := range metrics {
+		if metric.Value != nil {
+			fmt.Println(
+				"ID:", metric.ID,
+				"Name:", metric.Name,
+				"Type:", metric.Type,
+				"Value:", *metric.Value,
+				"CreatedAt:", metric.CreatedAt.String(),
+			)
+		} else {
+			fmt.Println(
+				"ID:", metric.ID,
+				"Name:", metric.Name,
+				"Type:", metric.Type,
+				"Delta:", *metric.Delta,
+				"CreatedAt:", metric.CreatedAt.String(),
+			)
+		}
 	}
 
 	// init service
