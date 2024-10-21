@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	ServerAddress  string
+	ServerURL      string
 	LogLevel       string
 	PollInterval   int64
 	ReportInterval int64
@@ -21,11 +21,23 @@ func GetConfig() (*Config, error) {
 
 	cfg := &Config{}
 
-	flag.StringVar(&cfg.ServerAddress, "a", "localhost:8080", "address and port to run server")
+	flag.StringVar(&cfg.ServerURL, "a", "http://localhost:8080", "URL and port to run server")
+	flag.Int64Var(&cfg.PollInterval, "p", 5, "poll interval (sec)")
+	flag.Int64Var(&cfg.ReportInterval, "r", 20, "report interval (sec)")
 
-	if envRunAddr := os.Getenv("SERVER_ADDRESS"); envRunAddr != "" {
-		cfg.ServerAddress = envRunAddr
+	cfg.ServerURL = getEnvStringOrDefault("SERVER_URL", "http://localhost:8080")
+	pollInt, err := getEnvIntOrDefault("POLL_INTERVAL", 5)
+	if err != nil {
+		return nil, err
 	}
+
+	repInt, err := getEnvIntOrDefault("REPORT_INTERVAL", 20)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg.PollInterval = int64(*pollInt)
+	cfg.ReportInterval = int64(*repInt)
 
 	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
 		cfg.LogLevel = envLogLevel
@@ -33,27 +45,27 @@ func GetConfig() (*Config, error) {
 		cfg.LogLevel = zapcore.ErrorLevel.String()
 	}
 
-	flag.Int64Var(&cfg.PollInterval, "p", 5, "poll interval (sec)")
+	flag.Parse()
 
-	if envPollInt := os.Getenv("POLL_INTERVAL"); envPollInt != "" {
-		intEnvPollInt, err := strconv.Atoi(envPollInt)
-		if err != nil {
-			return nil, err
-		}
-		cfg.PollInterval = int64(intEnvPollInt)
+	return cfg, nil
+}
+
+func getEnvStringOrDefault(name, defaultValue string) string {
+	if envRunAddr := os.Getenv(name); envRunAddr != "" {
+		return envRunAddr
 	}
 
-	flag.Int64Var(&cfg.ReportInterval, "r", 20, "report interval (sec)")
+	return defaultValue
+}
 
-	if envRepInt := os.Getenv("REPORT_INTERVAL"); envRepInt != "" {
+func getEnvIntOrDefault(name string, defaultValue int) (*int, error) {
+	if envRepInt := os.Getenv(name); envRepInt != "" {
 		intEnvRepInt, err := strconv.Atoi(envRepInt)
 		if err != nil {
 			return nil, err
 		}
-		cfg.ReportInterval = int64(intEnvRepInt)
+		return &intEnvRepInt, nil
 	}
 
-	flag.Parse()
-
-	return cfg, nil
+	return &defaultValue, nil
 }

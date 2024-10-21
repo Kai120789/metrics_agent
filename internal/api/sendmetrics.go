@@ -12,7 +12,7 @@ import (
 func SendMetrics(dto [31]dto.Metric, serverURL string) error {
 	fmt.Println(1)
 	client := &http.Client{}
-	metricsURL := fmt.Sprintf("http://%s/api/updates", serverURL)
+	metricsURL := fmt.Sprintf("%s/api/updates", serverURL)
 
 	// dto to JSON
 	jsonStr, err := json.Marshal(dto)
