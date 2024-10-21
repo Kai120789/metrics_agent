@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func PrintMetrics(metrics []dto.Metric) {
+func PrintMetrics(metrics [31]dto.Metric) {
 	for _, metric := range metrics {
 		if metric.Value != nil {
 			fmt.Println(

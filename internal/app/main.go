@@ -29,7 +29,7 @@ func StartApp() {
 	// init service
 	serv := service.New(log, cfg)
 
-	var metrics []dto.Metric
+	var metrics [31]dto.Metric
 
 	metrics = serv.AddPollCount(metrics)
 
@@ -38,18 +38,14 @@ func StartApp() {
 	sendTicker := time.NewTicker(time.Second * time.Duration(cfg.ReportInterval))
 
 	// loop to collect and send metrics
-	go func() {
-		for {
-			select {
-			// collect metrics every PollInterval seconds
-			case <-collectTicker.C:
-				serv.CollectMetrics(metrics)
-			// send metrics every ReportInterval seconds
-			case <-sendTicker.C:
-				serv.SendMetrics(metrics)
-			}
+	for {
+		select {
+		// collect metrics every PollInterval seconds
+		case <-collectTicker.C:
+			serv.CollectMetrics(metrics)
+		// send metrics every ReportInterval seconds
+		case <-sendTicker.C:
+			serv.SendMetrics(metrics)
 		}
-	}()
-
-	select {}
+	}
 }

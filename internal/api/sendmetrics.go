@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func SendMetrics(dto []dto.Metric, serverURL string) error {
+func SendMetrics(dto [31]dto.Metric, serverURL string) error {
 	fmt.Println(1)
 	client := &http.Client{}
 	metricsURL := fmt.Sprintf("http://%s/api/updates", serverURL)

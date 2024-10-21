@@ -22,7 +22,7 @@ func New(l *zap.Logger, c *config.Config) *Service {
 	}
 }
 
-func (s *Service) AddPollCount(metrics []dto.Metric) []dto.Metric {
+func (s *Service) AddPollCount(metrics [31]dto.Metric) [31]dto.Metric {
 	pollCountStartValue := int64(0)
 
 	pollCount := dto.Metric{
@@ -34,24 +34,20 @@ func (s *Service) AddPollCount(metrics []dto.Metric) []dto.Metric {
 		CreatedAt: time.Now(),
 	}
 
-	metrics = append(metrics, pollCount)
+	metrics[0] = pollCount
 
 	return metrics
 }
 
-func (s *Service) CollectMetrics(metrics []dto.Metric) {
-	metrics = metrics[:1]
-
-	metrics = append(metrics, utils.GetMetrics()...)
+func (s *Service) CollectMetrics(metrics [31]dto.Metric) {
+	metrics = utils.GetMetrics(metrics[0])
 
 	*metrics[0].Delta += 1
 
 	utils.PrintMetrics(metrics)
-
-	time.Sleep(time.Second * time.Duration(s.config.PollInterval))
 }
 
-func (s *Service) SendMetrics(metrics []dto.Metric) {
+func (s *Service) SendMetrics(metrics [31]dto.Metric) {
 	err := api.SendMetrics(metrics, s.config.ServerAddress)
 	if err != nil {
 		return
