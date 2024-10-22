@@ -6,8 +6,7 @@ import (
 )
 
 type Logger struct {
-	ZapLogger   *zap.Logger
-	AtomicLevel zap.AtomicLevel
+	ZapLogger *zap.Logger
 }
 
 func New(level string) (*Logger, error) {
@@ -40,5 +39,5 @@ func New(level string) (*Logger, error) {
 		return nil, err
 	}
 
-	return &Logger{ZapLogger: zapLogger, AtomicLevel: atomicLevel}, nil
+	return &Logger{ZapLogger: zapLogger}, nil
 }
