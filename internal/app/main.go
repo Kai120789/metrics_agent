@@ -42,7 +42,7 @@ func StartApp() {
 		select {
 		// collect metrics every PollInterval seconds
 		case <-collectTicker.C:
-			serv.CollectMetrics(metrics)
+			metrics = serv.CollectMetrics(metrics)
 		// send metrics every ReportInterval seconds
 		case <-sendTicker.C:
 			serv.SendMetrics(metrics)

@@ -39,12 +39,14 @@ func (s *Service) AddPollCount(metrics [31]dto.Metric) [31]dto.Metric {
 	return metrics
 }
 
-func (s *Service) CollectMetrics(metrics [31]dto.Metric) {
-	metrics = utils.GetMetrics(metrics[0])
+func (s *Service) CollectMetrics(metrics [31]dto.Metric) [31]dto.Metric {
+	metricsAll := utils.GetMetrics(metrics)
 
-	*metrics[0].Delta += 1
+	*metricsAll[0].Delta += 1
 
-	utils.PrintMetrics(metrics)
+	utils.PrintMetrics(metricsAll)
+
+	return metricsAll
 }
 
 func (s *Service) SendMetrics(metrics [31]dto.Metric) {

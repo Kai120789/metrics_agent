@@ -7,12 +7,12 @@ import (
 	"time"
 )
 
-func GetMetrics(pollCount dto.Metric) [31]dto.Metric {
+func GetMetrics(met [31]dto.Metric) [31]dto.Metric {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
 	metrics := [31]dto.Metric{
-		pollCount,
+		met[0],
 		addMetric(2, "Alloc", float64(memStats.Alloc)),
 		addMetric(3, "BuckHashSys", float64(memStats.BuckHashSys)),
 		addMetric(4, "Frees", float64(memStats.Frees)),

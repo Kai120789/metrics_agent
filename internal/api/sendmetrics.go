@@ -21,6 +21,8 @@ func SendMetrics(dto [31]dto.Metric, serverURL string) error {
 		return err
 	}
 
+	fmt.Println("JSON Payload:", string(jsonStr))
+
 	// create io.Reader из JSON
 	response, err := client.Post(metricsURL, "application/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
