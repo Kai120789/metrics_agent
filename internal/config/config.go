@@ -14,6 +14,7 @@ type Config struct {
 	LogLevel       string
 	PollInterval   int64
 	ReportInterval int64
+	SecretKey      string
 }
 
 func GetConfig() (*Config, error) {
@@ -25,6 +26,7 @@ func GetConfig() (*Config, error) {
 	flag.Int64Var(&cfg.PollInterval, "p", 5, "poll interval (sec)")
 	flag.Int64Var(&cfg.ReportInterval, "r", 20, "report interval (sec)")
 
+	cfg.SecretKey = getEnvStringOrDefault("SECRET_KEY", "default")
 	cfg.ServerURL = getEnvStringOrDefault("SERVER_URL", "http://localhost:8080")
 	pollInt, err := getEnvIntOrDefault("POLL_INTERVAL", 5)
 	if err != nil {

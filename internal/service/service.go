@@ -50,7 +50,7 @@ func (s *Service) CollectMetrics(metrics [31]dto.Metric) [31]dto.Metric {
 }
 
 func (s *Service) SendMetrics(metrics [31]dto.Metric) {
-	err := api.SendMetrics(metrics, s.config.ServerURL)
+	err := api.SendMetrics(metrics, s.config.ServerURL, s.config.SecretKey)
 	if err != nil {
 		return
 	}
