@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 )
 
@@ -32,13 +31,6 @@ func SendMetrics(dto [31]dto.Metric, serverURL string) error {
 	defer response.Body.Close()
 
 	fmt.Println("Response status:", response.StatusCode)
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-	fmt.Println(string(body))
 
 	if response.StatusCode != http.StatusCreated {
 		return err
