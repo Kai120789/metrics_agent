@@ -6,24 +6,26 @@ import (
 )
 
 func PrintMetrics(metrics [31]dto.Metric) {
+	var id uint = 1
 	for _, metric := range metrics {
+
 		if metric.Value != nil {
 			fmt.Println(
-				"ID:", metric.ID,
+				"ID:", id,
 				"Name:", metric.Name,
 				"Type:", metric.Type,
 				"Value:", *metric.Value,
-				"CreatedAt:", metric.CreatedAt.String(),
 			)
 		} else {
 			fmt.Println(
-				"ID:", metric.ID,
+				"ID:", id,
 				"Name:", metric.Name,
 				"Type:", metric.Type,
 				"Delta:", *metric.Delta,
-				"CreatedAt:", metric.CreatedAt.String(),
 			)
 		}
+
+		id += 1
 	}
 	fmt.Println()
 }
