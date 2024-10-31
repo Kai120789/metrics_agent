@@ -1,6 +1,7 @@
 package app
 
 import (
+	"agent/internal/api"
 	"agent/internal/config"
 	"agent/internal/dto"
 	"agent/internal/service"
@@ -26,8 +27,11 @@ func StartApp() {
 
 	log := zapLog.ZapLogger
 
+	// init api
+	api := api.New()
+
 	// init service
-	serv := service.New(log, cfg)
+	serv := service.New(log, cfg, api)
 
 	var metrics [31]dto.Metric
 

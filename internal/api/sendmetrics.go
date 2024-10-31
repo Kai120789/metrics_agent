@@ -9,7 +9,21 @@ import (
 	"net/http"
 )
 
-func SendMetrics(dto [31]dto.Metric, serverURL string, key string) error {
+type Api struct {
+	client *http.Client
+}
+
+type Apier interface {
+	SendMetrics(dto [31]dto.Metric, serverURL string, key string) error
+}
+
+func New() *Api {
+	return &Api{
+		client: &http.Client{},
+	}
+}
+
+func (a *Api) SendMetrics(dto [31]dto.Metric, serverURL string, key string) error {
 	fmt.Println(1)
 	client := &http.Client{}
 	metricsURL := fmt.Sprintf("%s/api/updates", serverURL)

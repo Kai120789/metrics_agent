@@ -14,12 +14,14 @@ import (
 type Service struct {
 	logger *zap.Logger
 	config *config.Config
+	api    *api.Api
 }
 
-func New(l *zap.Logger, c *config.Config) *Service {
+func New(l *zap.Logger, c *config.Config, a *api.Api) *Service {
 	return &Service{
 		logger: l,
 		config: c,
+		api:    a,
 	}
 }
 
@@ -84,7 +86,7 @@ func (s *Service) CollectMetrics(metrics [31]dto.Metric) [31]dto.Metric {
 }
 
 func (s *Service) SendMetrics(metrics [31]dto.Metric) {
-	err := api.SendMetrics(metrics, s.config.ServerURL, s.config.SecretKey)
+	err := s.api.SendMetrics(metrics, s.config.ServerURL, s.config.SecretKey)
 	if err != nil {
 		return
 	}
