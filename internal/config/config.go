@@ -22,9 +22,11 @@ func GetConfig() (*Config, error) {
 
 	cfg := &Config{}
 
-	flag.StringVar(&cfg.ServerURL, "a", "http://localhost:8080", "URL and port to run server")
-	flag.Int64Var(&cfg.PollInterval, "p", 5, "poll interval (sec)")
-	flag.Int64Var(&cfg.ReportInterval, "r", 20, "report interval (sec)")
+	if !flag.Parsed() {
+		flag.StringVar(&cfg.ServerURL, "a", "http://localhost:8080", "URL and port to run server")
+		flag.Int64Var(&cfg.PollInterval, "p", 5, "poll interval (sec)")
+		flag.Int64Var(&cfg.ReportInterval, "r", 20, "report interval (sec)")
+	}
 
 	cfg.SecretKey = getEnvStringOrDefault("SECRET_KEY", "default")
 	cfg.ServerURL = getEnvStringOrDefault("SERVER_URL", "http://localhost:8080")
